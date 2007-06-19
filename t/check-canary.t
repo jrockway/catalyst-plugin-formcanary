@@ -3,7 +3,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 13;
 
 use Test::WWW::Mechanize::Catalyst 't::lib::TestApp';
 
@@ -33,5 +33,23 @@ $mech->get_ok("http://whatever/one_form?foo=bar&baz=quux&".
 $mech->get("http://whatever/one_form?foo=bar&baz=quux&".
            "canary_$canary_key=$canary_value");
 ok(!$mech->success, 'canary only works once');
+like($error, qr/Invalid canary in form submission.  Aborting./);
+
+# try once more
+undef $canary_value;
+undef $canary_key;
+
+$mech->get_ok('http://whatever/one_form');
+
+$content = $mech->content;
+($canary_key, $canary_value) = 
+  ($content =~ /name="canary_([^"]+)".*value="([^"]+)"/);
+
+ok($canary_key, 'got canary key');
+ok($canary_value, 'got canary value');
+
+$mech->get("http://whatever/one_form?foo=bar&baz=quux&".
+           "canary_$canary_key=i_made_this_up_lol");
+ok(!$mech->success, 'garbage canary fails');
 like($error, qr/Invalid canary in form submission.  Aborting./);
 
