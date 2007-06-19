@@ -19,13 +19,30 @@ sub setup {
 
 sub finalize_body {
     my $c = shift;
-    $c->NEXT::finalize_body(@_);
 
     # see if we should touch this
     my $content_type = $c->response->content_type;
-    return if $content_type !~ /html/; # xhtml+xml, html, etc.
+    if ($content_type =~ /html/){ # xhtml+xml, html, etc.
+        
+        # generate some cryptographic tokens
+        my $key    = $c->generate_session_id;
+        my $canary = $c->generate_session_id;
+        my $name   = "canary_$key";
+        
+        # store them in the session
+        $c->session->{_formcanary} ||= {};
+        $c->session->{_formcanary}{$key} = $name;
+ 
+        # add the input tags to the body
+        my $body = $c->response->body;
+        $body =~         # yuck.
+          s{</form>}
+           {<input type="hidden" name="$name" id="$name" value="$canary" />
+            </form>}g;
+        $c->response->body($body);
+    }
     
-    die "HTML sucks, loser";
+    return $c->NEXT::finalize_body(@_);
 }
 
 __END__
