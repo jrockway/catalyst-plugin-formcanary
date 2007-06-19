@@ -2,50 +2,41 @@ package Catalyst::Plugin::FormCanary;
 
 use warnings;
 use strict;
+use Carp;
+
+our $VERSION = '0.01';
+
+sub setup {
+    my $c = shift;
+    
+    $c->NEXT::setup(@_);
+    
+    croak 'please setup Catalyst::Plugin::Session before FormCanary'
+      if !$c->can('session');
+    
+    return;
+}
+
+__END__
 
 =head1 NAME
 
 Catalyst::Plugin::FormCanary - The great new Catalyst::Plugin::FormCanary!
 
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
-
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+    use Catalyst qw(... Session ... FormCanary ...);
 
-Perhaps a little code snippet.
+FormCanary will examine your outgoing HTML and add a canary value to
+each form.  This canary is stored in the session.  When the form is
+submitted, the presence of a canary is checked (and the canary is
+deleted so the form can't be reused).  If the canary is valid, your
+app gets control.  If the canary is invalid or missing, the
+request fails.
 
-    use Catalyst::Plugin::FormCanary;
+=head1 DEPENDENCIES
 
-    my $foo = Catalyst::Plugin::FormCanary->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 FUNCTIONS
-
-=head2 function1
-
-=cut
-
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
+You need C<Session> up and running.
 
 =head1 AUTHOR
 
@@ -59,35 +50,17 @@ L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Catalyst-Plugin-FormCanary>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
 
-=head1 SUPPORT
+L<irc://irc.perl.org/#catalyst> is also a good place to ask for help.
 
-You can find documentation for this module with the perldoc command.
+=hea1 GIT
 
-    perldoc Catalyst::Plugin::FormCanary
-
-You can also look for information at:
-
-=over 4
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Catalyst-Plugin-FormCanary>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Catalyst-Plugin-FormCanary>
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Catalyst-Plugin-FormCanary>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Catalyst-Plugin-FormCanary>
-
-=back
+   git clone git://git.jrock.us/Catalyst-Plugin-FormCanary
 
 =head1 ACKNOWLEDGEMENTS
+
+This site gave me the idea:
+
+L<http://www.25hoursaday.com/weblog/2007/06/05/WhatRubyOnRailsCanLearnFromASPNET.aspx>
 
 =head1 COPYRIGHT & LICENSE
 
