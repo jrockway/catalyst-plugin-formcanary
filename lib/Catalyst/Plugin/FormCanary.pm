@@ -17,11 +17,12 @@ sub setup {
     return;
 }
 
+
 __END__
 
 =head1 NAME
 
-Catalyst::Plugin::FormCanary - The great new Catalyst::Plugin::FormCanary!
+Catalyst::Plugin::FormCanary - check that forms are submitted from your site
 
 =head1 SYNOPSIS
 
@@ -36,7 +37,7 @@ request fails.
 
 =head1 DEPENDENCIES
 
-You need C<Session> up and running.
+You need L<Catalyst::Plugin::Session> up and running.
 
 =head1 AUTHOR
 
@@ -52,7 +53,7 @@ your bug as I make changes.
 
 L<irc://irc.perl.org/#catalyst> is also a good place to ask for help.
 
-=hea1 GIT
+=head1 GIT
 
    git clone git://git.jrock.us/Catalyst-Plugin-FormCanary
 

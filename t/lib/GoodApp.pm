@@ -4,6 +4,6 @@ package t::lib::GoodApp;
 use strict;
 use warnings;
 
-use Catalyst qw(Session Session::State::Cookie Session::Store::File FormCanary);
+use Catalyst qw(Session Session::State::Cookie Session::Store::Dummy FormCanary);
 
 1;
