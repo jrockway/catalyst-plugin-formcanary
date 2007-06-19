@@ -72,7 +72,6 @@ sub prepare_action {
         
         # and die if one was invalid
         die "Invalid canary in form submission.  Aborting." if !$success;
-
     }
     
     return;
@@ -89,11 +88,25 @@ Catalyst::Plugin::FormCanary - check that forms are submitted from your site
     use Catalyst qw(... Session ... FormCanary ...);
 
 FormCanary will examine your outgoing HTML and add a canary value to
-each form.  This canary is stored in the session.  When the form is
-submitted, the presence of a canary is checked (and the canary is
-deleted so the form can't be reused).  If the canary is valid, your
-app gets control.  If the canary is invalid or missing, the
-request fails.
+each form.  When the form is submitted, the value of the canary is
+compared against one saved in the session at page generation time.  If
+the canary that's sent doesn't match the one in the session (or there
+is no canary at all), the request is halted.
+
+There is no way to get params into your application without a correct
+canary.  This is good for preventing "cross-site request attacks".
+
+This module is apparently compatible with FormBuilder.  Just drop it
+into your use line and have secure submit-once-only forms.  Yay.
+
+=head1 TODO
+
+Don't delete the canary, in case resubmitting is OK.
+
+Make this an ActionClass so you can apply the check to a single action
+instead of everything.
+
+Make the error nicer than C<die>.
 
 =head1 DEPENDENCIES
 
@@ -115,7 +128,11 @@ L<irc://irc.perl.org/#catalyst> is also a good place to ask for help.
 
 =head1 GIT
 
+Clone from:
+
    git clone git://git.jrock.us/Catalyst-Plugin-FormCanary
+
+Or view online at L<http://git.jrock.us/?p=Catalyst-Plugin-FormCanary.git>
 
 =head1 ACKNOWLEDGEMENTS
 
