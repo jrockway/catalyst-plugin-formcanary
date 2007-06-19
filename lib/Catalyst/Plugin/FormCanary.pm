@@ -17,11 +17,11 @@ sub setup {
     return;
 }
 
-sub finalize_body {
+sub finalize_session {
     my $c = shift;
 
     # see if we should touch this
-    my $content_type = $c->response->content_type;
+    my $content_type = $c->response->content_type || '';
     if ($content_type =~ /html/){ # xhtml+xml, html, etc.
         
         # generate some cryptographic tokens
@@ -31,8 +31,8 @@ sub finalize_body {
         
         # store them in the session
         $c->session->{_formcanary} ||= {};
-        $c->session->{_formcanary}{$key} = $name;
- 
+        $c->session->{_formcanary}{$key} = $canary;
+        
         # add the input tags to the body
         my $body = $c->response->body;
         $body =~         # yuck.
@@ -42,7 +42,40 @@ sub finalize_body {
         $c->response->body($body);
     }
     
-    return $c->NEXT::finalize_body(@_);
+    return $c->NEXT::finalize_session(@_);
+}
+
+sub prepare_action {
+    my $c = shift;
+    $c->NEXT::prepare_action(@_);
+    
+    if (keys %{$c->request->params||{}}) {
+        # there were some params, check canary
+        my @canary_keys = 
+          map {s/^canary_//; $_} grep {/^canary_/} keys %{$c->request->params||{}};
+
+        # no canary, that's bad
+        die "No canaries found" if !@canary_keys;
+
+        # iterate over each and compare to the session
+        my $success = 1;
+        foreach my $key (@canary_keys) {
+            my $stored   = delete $c->session->{_formcanary}{$key};
+            my $provided = delete $c->request->params->{"canary_$key"};
+
+            if (!defined $stored || !defined $provided || $stored ne $provided) 
+              {
+                  $success = 0;
+                  last;
+              }
+        }
+        
+        # and die if one was invalid
+        die "Invalid canary in form submission.  Aborting." if !$success;
+
+    }
+    
+    return;
 }
 
 __END__
