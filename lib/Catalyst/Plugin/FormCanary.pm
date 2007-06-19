@@ -17,6 +17,16 @@ sub setup {
     return;
 }
 
+sub finalize_body {
+    my $c = shift;
+    $c->NEXT::finalize_body(@_);
+
+    # see if we should touch this
+    my $content_type = $c->response->content_type;
+    return if $content_type !~ /html/; # xhtml+xml, html, etc.
+    
+    die "HTML sucks, loser";
+}
 
 __END__
 

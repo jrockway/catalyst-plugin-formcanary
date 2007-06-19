@@ -3,6 +3,7 @@ use inc::Module::Install;
 name 'Catalyst-Plugin-FormCanary';
 all_from 'lib/Catalyst/Plugin/FormCanary.pm';
 
+requires 'Catalyst';
 requires 'Catalyst::Plugin::Session';
 
 build_requires 'Test::More';
