@@ -96,7 +96,7 @@ is no canary at all), the request is halted.
 There is no way to get params into your application without a correct
 canary.  This is good for preventing "cross-site request attacks".
 
-This module is apparently compatible with FormBuilder.  Just drop it
+This module is compatible with FormBuilder.  Just drop it
 into your use line and have secure submit-once-only forms.  Yay.
 
 =head1 TODO
