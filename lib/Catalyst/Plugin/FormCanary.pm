@@ -17,7 +17,7 @@ sub setup {
     return;
 }
 
-sub finalize_session {
+sub finalize_body {
     my $c = shift;
 
     # see if we should touch this
@@ -42,7 +42,7 @@ sub finalize_session {
         $c->response->body($body);
     }
     
-    return $c->NEXT::finalize_session(@_);
+    return $c->NEXT::finalize_body(@_);
 }
 
 sub prepare_action {
