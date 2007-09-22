@@ -41,14 +41,15 @@ sub finalize_body {
             </form>}g;
         $c->response->body($body);
     }
-    
+
     return $c->NEXT::finalize_body(@_);
 }
 
 sub prepare_action {
     my $c = shift;
     $c->NEXT::prepare_action(@_);
-    
+    $c->session;
+
     if (keys %{$c->request->params||{}}) {
         # there were some params, check canary
         my @canary_keys = 
